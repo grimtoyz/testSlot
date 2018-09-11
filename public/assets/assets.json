@@ -2,7 +2,7 @@
 
 "Bet_Line.png":
 {
-	"frame": {"x":0,"y":0,"w":770,"h":16},
+	"frame": {"x":0,"y":310,"w":770,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":770,"h":16},
@@ -10,7 +10,7 @@
 },
 "BG.png":
 {
-	"frame": {"x":0,"y":16,"w":960,"h":536},
+	"frame": {"x":0,"y":326,"w":960,"h":536},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":536},
@@ -18,7 +18,7 @@
 },
 "BTN_Spin.png":
 {
-	"frame": {"x":0,"y":552,"w":98,"h":98},
+	"frame": {"x":98,"y":0,"w":98,"h":98},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":98},
@@ -26,15 +26,23 @@
 },
 "BTN_Spin_d.png":
 {
-	"frame": {"x":98,"y":552,"w":98,"h":98},
+	"frame": {"x":0,"y":0,"w":98,"h":98},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":98},
 	"sourceSize": {"w":98,"h":98}
 },
+"mask.png":
+{
+	"frame": {"x":0,"y":862,"w":960,"h":536},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":536},
+	"sourceSize": {"w":960,"h":536}
+},
 "SYM1.png":
 {
-	"frame": {"x":196,"y":552,"w":235,"h":155},
+	"frame": {"x":0,"y":155,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -42,7 +50,7 @@
 },
 "SYM3.png":
 {
-	"frame": {"x":431,"y":552,"w":235,"h":155},
+	"frame": {"x":470,"y":155,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -50,7 +58,7 @@
 },
 "SYM4.png":
 {
-	"frame": {"x":666,"y":552,"w":235,"h":155},
+	"frame": {"x":196,"y":0,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -58,7 +66,7 @@
 },
 "SYM5.png":
 {
-	"frame": {"x":0,"y":707,"w":235,"h":155},
+	"frame": {"x":431,"y":0,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -66,7 +74,7 @@
 },
 "SYM6.png":
 {
-	"frame": {"x":235,"y":707,"w":235,"h":155},
+	"frame": {"x":235,"y":155,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -74,7 +82,7 @@
 },
 "SYM7.png":
 {
-	"frame": {"x":470,"y":707,"w":235,"h":155},
+	"frame": {"x":666,"y":0,"w":235,"h":155},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":155},
@@ -88,8 +96,8 @@
 	"version": "1.0",
 	"image": "assets.png",
 	"format": "RGBA8888",
-	"size": {"w":960,"h":862},
+	"size": {"w":960,"h":1398},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:f6c262142502de0ebc6b92af522dd80a:26fee3c088b671e971c379fab0f8a972:a759b6bbc8381ac9c472b28f589ad0d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:87fb1bcd5213822336242a5c3d870438:d30629f2b015b5716daa0ec0355efb00:a759b6bbc8381ac9c472b28f589ad0d6$"
 }
 }

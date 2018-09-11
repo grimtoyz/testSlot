@@ -43587,97 +43587,10 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./src/components/machineController.js":
-/*!*********************************************!*\
-  !*** ./src/components/machineController.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _reelSpinner = __webpack_require__(/*! ./reelSpinner */ "./src/components/reelSpinner.js");
-
-var _reelSpinner2 = _interopRequireDefault(_reelSpinner);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var REEL_STOP_DELAY = 50;
-
-var isSpinning = false;
-
-var MachineController = function () {
-    function MachineController(reels) {
-        _classCallCheck(this, MachineController);
-
-        this.reels = reels;
-        this.spinners = [];
-        this.ticker = new PIXI.ticker.Ticker();
-        this.ticker.stop();
-        this.ticker.add(this.update.bind(this));
-
-        this.createSpinners();
-    }
-
-    _createClass(MachineController, [{
-        key: "createSpinners",
-        value: function createSpinners() {
-            var i;
-            for (i = 0; i < this.reels.length; i++) {
-                var spinner = new _reelSpinner2.default(this.reels[i]);
-                this.spinners.push(spinner);
-            }
-        }
-    }, {
-        key: "spin",
-        value: function spin() {
-            if (isSpinning) return;
-
-            isSpinning = true;
-
-            var i;
-            for (i = 0; i < this.spinners.length; i++) {
-                this.spinners[i].spin(REEL_STOP_DELAY * i);
-            }
-
-            this.ticker.start();
-        }
-    }, {
-        key: "update",
-        value: function update(deltaTime) {
-
-            var i;
-            var allFinished = true;
-            for (i = 0; i < this.spinners.length; i++) {
-                this.spinners[i].update(deltaTime);
-
-                if (!this.spinners[i].finished) allFinished = false;
-            }
-
-            if (allFinished) isSpinning = false;
-        }
-    }]);
-
-    return MachineController;
-}();
-
-exports.default = MachineController;
-
-/***/ }),
-
-/***/ "./src/components/reel.js":
-/*!********************************!*\
-  !*** ./src/components/reel.js ***!
-  \********************************/
+/***/ "./src/framework/components/reelSpinner.js":
+/*!*************************************************!*\
+  !*** ./src/framework/components/reelSpinner.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -43691,295 +43604,60 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var REEL_WIDTH = 123;
-var ALL_SYMBOLS_AMOUNT = 50;
-var UNIQUE_SYMBOLS_AMOUNT = 13;
-var SYMBOL_SCALE = 1.889;
-
-var Reel = function () {
-    function Reel(screenHeight) {
-        _classCallCheck(this, Reel);
-
-        this.screenHeight = screenHeight;
-        this._symbolsContainer = new PIXI.Container();
-        this.symbolIDs = [];
-
-        this.generateSymbolIDs();
-
-        this.currentSymbols = [0, 1, 2, 3, 4];
-        this.createSymbols(this.currentSymbols);
-        // this.updateSymbols(this.currentSymbols);
-
-        var texture = PIXI.utils.TextureCache['M0_000.jpg'];
-        this._symbolHeight = Math.floor(texture.height * SYMBOL_SCALE);
-    }
-
-    _createClass(Reel, [{
-        key: 'generateSymbolIDs',
-        value: function generateSymbolIDs() {
-            var i;
-            for (i = 0; i < ALL_SYMBOLS_AMOUNT; i++) {
-                var id = Math.floor(Math.random() * UNIQUE_SYMBOLS_AMOUNT);
-                this.symbolIDs.push(id);
-            }
-        }
-    }, {
-        key: 'createSymbols',
-        value: function createSymbols(symbolsToShow) {
-            var i;
-            for (i = 0; i < symbolsToShow.length; i++) {
-                var id = this.symbolIDs[symbolsToShow[i]];
-                var texture = PIXI.utils.TextureCache['M' + id + '_000.jpg'];
-                var symbol = new PIXI.Sprite(texture);
-
-                symbol.scale.x = SYMBOL_SCALE;
-                symbol.scale.y = SYMBOL_SCALE;
-
-                symbol.y = -2 * Math.floor(symbol.height) + i * Math.floor(symbol.height);
-
-                this._symbolsContainer.addChild(symbol);
-            }
-        }
-
-        // updateSymbols(symbolsToShow){
-        //
-        //     // this._symbolsContainer.removeChildren();
-        //
-        //     var i;
-        //     for (i = 0; i < symbolsToShow.length; i++) {
-        //         let id = this.symbolIDs[symbolsToShow[i]];
-        //         let texture = PIXI.utils.TextureCache[`M${id}_000.jpg`];
-        //         var symbol = new PIXI.Sprite(texture);
-        //
-        //         symbol.scale.x = SYMBOL_SCALE;
-        //         symbol.scale.y = SYMBOL_SCALE;
-        //
-        //         symbol.y = -2 * symbol.height + i * symbol.height;
-        //
-        //         this._symbolsContainer.addChild(symbol);
-        //     }
-        //
-        //     console.log(this._symbolsContainer.children.length);
-        // }
-
-        // spin(stopDelay){
-        //     this.spinner.spin(stopDelay, this.onPositionUpdated());
-        //
-        // }
-
-        // update(deltaTime){
-        //     this.spinner.update(deltaTime);
-        //     // this.reelContainer.y = this.spinner.update(deltaTime);
-        //     // this.reelContainer.y = this.spinner.update(deltaTime);
-        // }
-
-    }, {
-        key: 'updatePosition',
-        value: function updatePosition(spinDelta) {
-
-            var shouldAdd = false;
-            var i;
-            var bottomSymbolY = 0;
-
-            for (i = 0; i < this._symbolsContainer.children.length; i++) {
-                var symbol = this._symbolsContainer.children[i];
-                // symbol.y += Math.floor(spinDelta);
-                symbol.y += spinDelta;
-
-                if (symbol.y > this.screenHeight) {
-                    this.shiftSymbols(-1);
-                    // this.addSymbolToTop(this.currentSymbols[0], symbol.y - (this._symbolsContainer.children.length) * this._symbolHeight);
-                    bottomSymbolY = symbol.y;
-                    shouldAdd = true;
-
-                    this._symbolsContainer.removeChild(symbol);
-                }
-            }
-
-            if (shouldAdd) {
-                var offset = bottomSymbolY - (this._symbolsContainer.children.length + 1) * this._symbolHeight;
-                this.addSymbolToTop(this.currentSymbols[0], offset);
-            }
-        }
-    }, {
-        key: 'addSymbolToTop',
-        value: function addSymbolToTop(index, offset) {
-            var id = this.symbolIDs[index];
-            var texture = PIXI.utils.TextureCache['M' + id + '_000.jpg'];
-            var symbol = new PIXI.Sprite(texture);
-
-            symbol.scale.x = SYMBOL_SCALE;
-            symbol.scale.y = SYMBOL_SCALE;
-
-            // symbol.y = this._symbolsContainer.children[0].y - this._symbolHeight;
-            symbol.y = offset;
-
-            this._symbolsContainer.addChildAt(symbol, 0);
-            this._symbolsContainer;
-        }
-    }, {
-        key: 'shiftSymbols',
-        value: function shiftSymbols(direction) {
-
-            var i;
-            for (i = 0; i < this.currentSymbols.length; i++) {
-                this.currentSymbols[i] += direction;
-
-                if (this.currentSymbols[i] < 0) this.currentSymbols[i] = this.symbolIDs.length - 1;
-
-                if (this.currentSymbols[i] > this.symbolIDs.length - 1) this.currentSymbols[i] = 0;
-            }
-        }
-    }, {
-        key: 'stop',
-        value: function stop() {}
-    }, {
-        key: 'reelContainer',
-        get: function get() {
-            return this._symbolsContainer;
-        }
-    }, {
-        key: 'width',
-        get: function get() {
-
-            return REEL_WIDTH;
-        }
-    }, {
-        key: 'symbolHeight',
-        get: function get() {
-            return this._symbolHeight;
-        }
-
-        // get spinner(){
-        //
-        //     return this.spinner;
-        // }
-
-    }]);
-
-    return Reel;
-}();
-
-exports.default = Reel;
-
-/***/ }),
-
-/***/ "./src/components/reelSpinner.js":
-/*!***************************************!*\
-  !*** ./src/components/reelSpinner.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _reel = __webpack_require__(/*! ./reel */ "./src/components/reel.js");
-
-var _reel2 = _interopRequireDefault(_reel);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var REEL_SPINING_SPEED = 30;
-var REEL_BACK_SPINING_SPEED = -1;
-var SPIN_DURATION = 50;
-var ACCELERATION_MULTIPLIER = 0.5;
 
 var ReelSpinner = function () {
-    function ReelSpinner(reel) {
+    function ReelSpinner() {
         _classCallCheck(this, ReelSpinner);
 
-        this.reel = reel;
-        this.symbolHeight = reel.symbolHeight;
-        this.isStarted = false;
+        // this.onSpinnerUpdated();
+        this.setupTicker();
     }
 
     _createClass(ReelSpinner, [{
-        key: "spin",
-        value: function spin(delay) {
-            this.spinDelta = 0;
-            this.delay = delay;
-            this.duration = SPIN_DURATION;
-            this.isStarted = true;
-            this.spinnedBackDistance = 0;
-            this.backTargetDistance = 0;
-            this.speed = 0;
-            this.totalSpinDelta = 0;
-            this._finished = false;
-            this.isBackEasing = false;
+        key: 'setupTicker',
+        value: function setupTicker() {
+            this._ticker = PIXI.ticker.shared;
+            this._ticker.autoStart = false;
+            this._ticker.stop();
+            this._ticker.add(this.update, this);
         }
     }, {
-        key: "update",
+        key: 'spin',
+        value: function spin(distance, duration) {
+            this._timeTotal = duration;
+            this._timeLeft = duration;
+            this._timePassed = 0;
+            this._distanceLeft = distance;
+            this._distanceTotal = distance;
+            this._ticker.start();
+        }
+    }, {
+        key: 'update',
         value: function update(deltaTime) {
-
-            if (!this.isStarted) return;
-
-            if (this.duration > 0) {
-                this.duration -= deltaTime;
-
-                if (this.speed < REEL_SPINING_SPEED) this.speed += deltaTime * ACCELERATION_MULTIPLIER;
-            } else if (this.delay > 0) {
-                this.delay -= deltaTime;
+            // this.reels.forEach(function(item) {
+            //     item.update(deltaTime);
+            // });
+            // this._stateMachine.update(deltaTime);
+            var distancePassed;
+            if (this._timePassed < this._timeTotal) {
+                distancePassed = this.lerp(0, this._distanceTotal, this._timePassed / this._timeTotal);
+                this._timePassed += deltaTime;
             } else {
-                if (this.isBackEasing && !this._finished) this.speed = REEL_BACK_SPINING_SPEED;
-
-                this.updateStopping(deltaTime);
-                return;
+                distancePassed = this._distanceTotal;
+                this._ticker.stop();
             }
 
-            this.spinDelta = deltaTime * this.speed;
-            this.totalSpinDelta += this.spinDelta;
-
-            this.reel.updatePosition(this.spinDelta);
+            this.onSpinnerUpdated(distancePassed);
         }
     }, {
-        key: "updateStopping",
-        value: function updateStopping(deltaTime) {
-
-            this.spinDelta = deltaTime * this.speed;
-
-            var totalSpinDelta = this.totalSpinDelta + this.spinDelta;
-
-            var divided = totalSpinDelta / this.reel.symbolHeight;
-            var decimals = divided - Math.trunc(divided);
-
-            if (!this.isBackEasing) {
-                if (decimals > 0.1 && decimals < 0.3) {
-                    this.speed = 0;
-                    this.spinDelta -= decimals * this.symbolHeight - 0.2 * this.symbolHeight;
-                    this.isBackEasing = true;
-                    this.backTargetDistance = 0.2 * this.symbolHeight;
-                }
-            } else {
-
-                this.spinnedBackDistance += Math.abs(this.spinDelta);
-
-                if (this.spinnedBackDistance >= this.backTargetDistance) {
-                    this.speed = 0;
-                    // this.spinDelta -= this.spinnedBackDistance - this.backTargetDistance;
-                    this.spinDelta -= decimals * this.symbolHeight - this.symbolHeight;
-                    this._finished = true;
-                    this.isStarted = false;
-                }
-            }
-
-            this.totalSpinDelta += this.spinDelta;
-
-            this.reel.updatePosition(this.spinDelta);
+        key: 'onSpinnerUpdated',
+        value: function onSpinnerUpdated(callback) {
+            this.onSpinnerUpdated = callback;
         }
     }, {
-        key: "finished",
-        get: function get() {
-            return this._finished;
+        key: 'lerp',
+        value: function lerp(originalValue, targetValue, interpolationValue) {
+            return (1 - interpolationValue) * originalValue + interpolationValue * targetValue;
         }
     }]);
 
@@ -43990,9 +43668,583 @@ exports.default = ReelSpinner;
 
 /***/ }),
 
-/***/ "./src/components/reelsView.js":
+/***/ "./src/framework/components/spinButton.js":
+/*!************************************************!*\
+  !*** ./src/framework/components/spinButton.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SpinButton = function (_PIXI$Sprite) {
+        _inherits(SpinButton, _PIXI$Sprite);
+
+        function SpinButton(textureEnabled, textureDisabled) {
+                _classCallCheck(this, SpinButton);
+
+                var _this = _possibleConstructorReturn(this, (SpinButton.__proto__ || Object.getPrototypeOf(SpinButton)).call(this, textureEnabled));
+
+                _this._textureEnabled = textureEnabled;
+                _this._textureDisabled = textureDisabled;
+
+                // this._spinButton = new PIXI.Sprite(textureEnabled);
+                // this.tap = this.onClick;
+                // this.view.click = this.onClick;
+
+                // this.buttonMode = true;
+                // this.view.interactive = true;
+
+                // spinButton.x = app.renderer.width - spinButton.width;
+                // spinButton.y = app.renderer.height - spinButton.height;
+                // app.stage.addChild(spinButton);
+
+                // this._spinButton.tap = this.onClick;
+                // this._spinButton.click = this.onClick;
+
+                // this.setState(true);
+
+                return _this;
+        }
+
+        _createClass(SpinButton, [{
+                key: 'setState',
+                value: function setState(isEnabled) {
+                        var texture = isEnabled ? this._textureEnabled : this._textureDisabled;
+
+                        if (!this._spinButton) this._spinButton = new PIXI.Sprite(texture);else this._spinButton.texture = texture;
+
+                        // this.spinButton.buttonMode = true;
+                }
+
+                // onClick(){
+                //     alert("clicked");
+                // }
+
+                // onClick(callback){
+                //    this.onClick = callback;
+                // }
+
+                // get view(){
+                //     return this.view;
+                // }
+
+        }]);
+
+        return SpinButton;
+}(PIXI.Sprite);
+
+exports.default = SpinButton;
+
+/***/ }),
+
+/***/ "./src/framework/components/stateMachine/stateMachine.js":
+/*!***************************************************************!*\
+  !*** ./src/framework/components/stateMachine/stateMachine.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StateMachine = function () {
+    function StateMachine() {
+        _classCallCheck(this, StateMachine);
+    }
+
+    _createClass(StateMachine, [{
+        key: 'switchToState',
+        value: function switchToState(newState) {
+            if (this._currentState) this._currentState.destroy();
+
+            this._currentState = newState;
+            this._currentState.onStateEnter();
+        }
+    }, {
+        key: 'update',
+        value: function update(deltaTime) {
+            // if (this._currentState)
+            //     this._currentState.update(deltaTime);
+        }
+    }, {
+        key: 'states',
+        set: function set(value) {
+            this._states = value;
+        },
+        get: function get() {
+            return this._states;
+        }
+    }]);
+
+    return StateMachine;
+}();
+
+exports.default = StateMachine;
+
+/***/ }),
+
+/***/ "./src/framework/components/stateMachine/states/baseSlotState.js":
+/*!***********************************************************************!*\
+  !*** ./src/framework/components/stateMachine/states/baseSlotState.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// 'use strict';
+//
+//
+// export default class BaseSlotState {
+//
+//     constructor(reelView) {
+//         this._reelView = reelView;
+//         this.stateOnEnter();
+//     }
+//
+//     // init(){
+//     //
+//     // }
+//     //
+//     // update(dt){
+//     //     // implemented in some sub-classes
+//     // }
+//     //
+//     // destroy(){
+//     //
+//     // }
+//
+// }
+
+
+/***/ }),
+
+/***/ "./src/framework/components/stateMachine/states/slotStateIdle.js":
+/*!***********************************************************************!*\
+  !*** ./src/framework/components/stateMachine/states/slotStateIdle.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _baseSlotState = __webpack_require__(/*! ./baseSlotState */ "./src/framework/components/stateMachine/states/baseSlotState.js");
+
+var _baseSlotState2 = _interopRequireDefault(_baseSlotState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SlotStateIdle = function () {
+    function SlotStateIdle() {
+        _classCallCheck(this, SlotStateIdle);
+    }
+
+    _createClass(SlotStateIdle, [{
+        key: "onStateEnter",
+        value: function onStateEnter() {}
+    }, {
+        key: "init",
+        value: function init() {}
+
+        // update(dt){
+        //     console.log("idle");
+        // }
+
+    }, {
+        key: "destroy",
+        value: function destroy() {}
+    }]);
+
+    return SlotStateIdle;
+}();
+
+exports.default = SlotStateIdle;
+
+/***/ }),
+
+/***/ "./src/framework/components/stateMachine/states/slotStatePreSpinAnimating.js":
+/*!***********************************************************************************!*\
+  !*** ./src/framework/components/stateMachine/states/slotStatePreSpinAnimating.js ***!
+  \***********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _baseSlotState = __webpack_require__(/*! ./baseSlotState */ "./src/framework/components/stateMachine/states/baseSlotState.js");
+
+var _baseSlotState2 = _interopRequireDefault(_baseSlotState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SlotStatePreSpinAnimating = function () {
+    function SlotStatePreSpinAnimating(reelView) {
+        _classCallCheck(this, SlotStatePreSpinAnimating);
+
+        this._reelView = reelView;
+        // this.onStateEnter();
+    }
+
+    _createClass(SlotStatePreSpinAnimating, [{
+        key: "onStateEnter",
+        value: function onStateEnter() {
+            this._reelView.rollBackReels();
+        }
+
+        // update(dt){
+        //     console.log("starting to animate");
+        //     console.log(this._reel);
+        // }
+
+    }, {
+        key: "destroy",
+        value: function destroy() {}
+
+        // // how much should reels roll back before actual spinning, one measure unit equals to symbol height
+        // get REEL_ROLL_BACK_AMOUNT(){
+        //     return 0.5;
+        // }
+
+        // get ROLL_BACK_DURATION(){
+        //     return 0.5;
+        // }
+
+    }]);
+
+    return SlotStatePreSpinAnimating;
+}();
+
+exports.default = SlotStatePreSpinAnimating;
+
+/***/ }),
+
+/***/ "./src/framework/controllers/gameСontroller.js":
+/*!*****************************************************!*\
+  !*** ./src/framework/controllers/gameСontroller.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// import TweenMax from "gsap";
+// import GameModel from "../model/game_model";
+// import GameView from "../view/game_view";
+
+
+var _pixi = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.js");
+
+var PIXI = _interopRequireWildcard(_pixi);
+
+var _slotModel = __webpack_require__(/*! ../../slot/models/slotModel */ "./src/slot/models/slotModel.js");
+
+var _slotModel2 = _interopRequireDefault(_slotModel);
+
+var _spinButton = __webpack_require__(/*! ../components/spinButton */ "./src/framework/components/spinButton.js");
+
+var _spinButton2 = _interopRequireDefault(_spinButton);
+
+var _gameView = __webpack_require__(/*! ../views/gameView */ "./src/framework/views/gameView.js");
+
+var _gameView2 = _interopRequireDefault(_gameView);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GameController = function () {
+    function GameController() {
+        _classCallCheck(this, GameController);
+
+        this.setupSlotModel();
+
+        this._slotView = new _gameView2.default(this.slotModel.getSymbolIDsOfEveryReel());
+        this._slotView.onSpinClickedCallback(this.onSpinClicked.bind(this));
+    }
+
+    _createClass(GameController, [{
+        key: 'setupSlotModel',
+        value: function setupSlotModel() {
+            this.slotModel = new _slotModel2.default();
+            this.slotModel.resetToDefaultValues();
+        }
+    }, {
+        key: 'onSpinClicked',
+        value: function onSpinClicked() {
+            this.requestSymbols();
+
+            if (this.canSpin()) this._slotView.startSpinning();
+        }
+    }, {
+        key: 'onStopClicked',
+        value: function onStopClicked() {
+            this._slotView.stopSpinning(this.slotModel.nextSymbols);
+        }
+    }, {
+        key: 'requestSymbols',
+        value: function requestSymbols() {
+            // should request data from server here instead of generating random symbols
+
+            var nextSymbols = new Array();
+
+            var i;
+            for (i = 0; i < this.slotModel.REELS_NUMBER; i++) {
+                var symbolIDs = this.slotModel.getReelSymbolIDsByReelIndex(i);
+                var index = Math.floor(Math.random() * symbolIDs.length);
+                var symbolID = symbolIDs[index];
+                nextSymbols.push(symbolID);
+            }
+
+            this.slotModel.nextSymbols = nextSymbols;
+
+            // for (var i in )
+        }
+    }, {
+        key: 'canSpin',
+        value: function canSpin() {
+            var canSpin = false;
+
+            if (this.slotModel.balance >= this.slotModel.currentBet) {
+                canSpin = true;
+            }
+
+            return canSpin;
+        }
+    }, {
+        key: 'spinButton',
+        set: function set(value) {
+            this._spinButton = value;
+        },
+        get: function get() {
+            return this._spinButton;
+        }
+    }, {
+        key: 'view',
+        get: function get() {
+            return this._slotView;
+        }
+    }]);
+
+    return GameController;
+}();
+
+exports.default = GameController;
+
+/***/ }),
+
+/***/ "./src/framework/views/gameView.js":
+/*!*****************************************!*\
+  !*** ./src/framework/views/gameView.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _spinButton = __webpack_require__(/*! ../components/spinButton */ "./src/framework/components/spinButton.js");
+
+var _spinButton2 = _interopRequireDefault(_spinButton);
+
+var _stateMachine = __webpack_require__(/*! ../components/stateMachine/stateMachine */ "./src/framework/components/stateMachine/stateMachine.js");
+
+var _stateMachine2 = _interopRequireDefault(_stateMachine);
+
+var _slotStateIdle = __webpack_require__(/*! ../components/stateMachine/states/slotStateIdle */ "./src/framework/components/stateMachine/states/slotStateIdle.js");
+
+var _slotStateIdle2 = _interopRequireDefault(_slotStateIdle);
+
+var _slotStatePreSpinAnimating = __webpack_require__(/*! ../components/stateMachine/states/slotStatePreSpinAnimating */ "./src/framework/components/stateMachine/states/slotStatePreSpinAnimating.js");
+
+var _slotStatePreSpinAnimating2 = _interopRequireDefault(_slotStatePreSpinAnimating);
+
+var _reelView = __webpack_require__(/*! ./reelView */ "./src/framework/views/reelView.js");
+
+var _reelView2 = _interopRequireDefault(_reelView);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var GameView = function (_PIXI$Container) {
+    _inherits(GameView, _PIXI$Container);
+
+    function GameView(symbolIDsOfEveryReel) {
+        _classCallCheck(this, GameView);
+
+        var _this = _possibleConstructorReturn(this, (GameView.__proto__ || Object.getPrototypeOf(GameView)).call(this));
+
+        _this.fillBackGround();
+        _this.createReels(symbolIDsOfEveryReel);
+        _this.createSpinButton();
+
+        _this.setupStateMachine();
+        // this.setupTicker();
+        return _this;
+    }
+
+    _createClass(GameView, [{
+        key: "fillBackGround",
+        value: function fillBackGround() {
+            var bg = new PIXI.Sprite(PIXI.utils.TextureCache["BG.png"]);
+
+            this.addChild(bg);
+        }
+    }, {
+        key: "createReels",
+        value: function createReels(symbolIDsOfEveryReel) {
+            this._reelView = new _reelView2.default(symbolIDsOfEveryReel);
+            this.addChild(this._reelView);
+        }
+    }, {
+        key: "createSpinButton",
+        value: function createSpinButton() {
+            var textureEnabled = PIXI.utils.TextureCache["BTN_Spin.png"];
+            var textureDisabled = PIXI.utils.TextureCache["BTN_Spin_d.png"];
+
+            this._spinButton = new _spinButton2.default(textureEnabled, textureDisabled);
+            this._spinButton.interactive = true;
+            this._spinButton.buttonMode = true;
+
+            this.setSpinButtonPosition();
+            this.addChild(this._spinButton);
+
+            this._spinButton.tap = this.onClick.bind(this);
+            this._spinButton.click = this.onClick.bind(this);
+        }
+    }, {
+        key: "setSpinButtonPosition",
+        value: function setSpinButtonPosition() {
+            this._spinButton.x = this.DEFAULT_SPIN_BUTTON_POSITION_X;
+            this._spinButton.y = this.DEFAULT_SPIN_BUTTON_POSITION_Y;
+        }
+    }, {
+        key: "setupStateMachine",
+        value: function setupStateMachine() {
+            this._stateMachine = new _stateMachine2.default();
+            this._stateMachine.switchToState(new _slotStateIdle2.default());
+        }
+
+        // setupTicker(){
+        //     this._ticker = PIXI.ticker.shared;
+        //     this._ticker.autoStart = true;
+        //     this._ticker.add(this.update, this);
+        // }
+
+        // update(deltaTime) {
+        //     // this.reels.forEach(function(item) {
+        //     //     item.update(deltaTime);
+        //     // });
+        //     this._stateMachine.update(deltaTime);
+        // }
+
+    }, {
+        key: "startSpinning",
+        value: function startSpinning() {
+            this._stateMachine.switchToState(new _slotStatePreSpinAnimating2.default(this._reelView));
+        }
+    }, {
+        key: "stopSpinning",
+        value: function stopSpinning(symbolsToStopAt) {}
+    }, {
+        key: "onClick",
+        value: function onClick() {
+            this.onSpinClickedCallback();
+        }
+    }, {
+        key: "onSpinClickedCallback",
+        value: function onSpinClickedCallback(callback) {
+            this.onSpinClickedCallback = callback;
+        }
+    }, {
+        key: "onStopClickedCallback",
+        value: function onStopClickedCallback(callback) {
+            this.onStopClickedCallback = callback;
+        }
+    }, {
+        key: "DEFAULT_SPIN_BUTTON_POSITION_X",
+        get: function get() {
+            return 824;
+        }
+    }, {
+        key: "DEFAULT_SPIN_BUTTON_POSITION_Y",
+        get: function get() {
+            return 218;
+        }
+
+        // get REEL_OFFSETS_X(){
+        //     return [70, 310, 553];
+        // }
+
+    }]);
+
+    return GameView;
+}(PIXI.Container);
+
+exports.default = GameView;
+
+/***/ }),
+
+/***/ "./src/framework/views/reel.js":
 /*!*************************************!*\
-  !*** ./src/components/reelsView.js ***!
+  !*** ./src/framework/views/reel.js ***!
   \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -44006,68 +44258,288 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _reel = __webpack_require__(/*! ./reel */ "./src/components/reel.js");
+var _reelSpinner = __webpack_require__(/*! ../components/reelSpinner */ "./src/framework/components/reelSpinner.js");
 
-var _reel2 = _interopRequireDefault(_reel);
-
-var _pixi = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.js");
-
-var PIXI = _interopRequireWildcard(_pixi);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+var _reelSpinner2 = _interopRequireDefault(_reelSpinner);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var REELS_AMOUNT = 5;
-var REELS_PADDING_X = 10;
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var ReelsView = function () {
-    function ReelsView(app) {
-        _classCallCheck(this, ReelsView);
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-        this.app = app;
-        this.container = new PIXI.Container();
-        this._reels = [];
+var Reel = function (_PIXI$Container) {
+    _inherits(Reel, _PIXI$Container);
 
-        this.createReels();
+    function Reel(symbolIDs) {
+        _classCallCheck(this, Reel);
+
+        var _this = _possibleConstructorReturn(this, (Reel.__proto__ || Object.getPrototypeOf(Reel)).call(this));
+
+        _this._symbolIDs = symbolIDs;
+        _this._spinner = new _reelSpinner2.default();
+        _this._spinner.onSpinnerUpdated(_this.onSpinnerUpdated.bind(_this));
+
+        _this.updateReelPosition(0);
+        return _this;
     }
 
-    _createClass(ReelsView, [{
-        key: "createReels",
-        value: function createReels() {
+    _createClass(Reel, [{
+        key: 'onSpinnerUpdated',
+        value: function onSpinnerUpdated(distancePassed) {
+            this.updateReelPosition(distancePassed);
+        }
+    }, {
+        key: 'updateReelPosition',
+        value: function updateReelPosition(position) {
+            var normalizedPosition = this.getNormalizedPosition(position);
+
+            var visibleSymbols = this.getVisibleSymbolIDs(normalizedPosition);
+
+            this.updateSymbolsIfNeeded(visibleSymbols);
+            // var symbolPosition = (this.symbolsTotal - 1)*normalizedPosition;
+            // this.y = symbolPosition - this.getSymbolIndexByPosition(normalizedPosition);
+            this.y = Math.round(position * this._symbolHeight * this._symbolIDs.length);
+        }
+    }, {
+        key: 'getNormalizedPosition',
+        value: function getNormalizedPosition(position) {
+            if (position > 1) return position - Math.floor(position);
+
+            if (position < 0) {
+                var positionAbs = Math.abs(position);
+                return -(positionAbs - Math.floor(positionAbs));
+            }
+
+            return position;
+        }
+    }, {
+        key: 'getVisibleSymbolIDs',
+        value: function getVisibleSymbolIDs(position) {
+            var centralSymbolID = this.getCentralRowSymbolIdByPosition(position);
+            var symbolsToShow = new Array();
 
             var i;
-            for (i = 0; i < REELS_AMOUNT; i++) {
-                var reel = new _reel2.default(this.app.renderer.height);
-                this._reels.push(reel);
+            for (i = 0; i < this.NUMBER_OF_ROWS; i++) {
+                var NUMBER_OF_ROWS_ABOVE = Math.floor((this.NUMBER_OF_ROWS - 1) / 2);
 
-                var gap = this.app.renderer.width - REELS_PADDING_X * 2 - reel.width * REELS_AMOUNT;
-                var offset = REELS_PADDING_X + reel.width * i + i * gap / (REELS_AMOUNT - 1);
+                var normalizedIndex = this.normalizeIndex(-NUMBER_OF_ROWS_ABOVE + i + centralSymbolID);
+                var symbolID = this._symbolIDs[normalizedIndex];
 
-                reel.reelContainer.x = offset;
-                this.container.addChild(reel.reelContainer);
+                symbolsToShow.push(symbolID);
+            }
+
+            return symbolsToShow;
+        }
+
+        // update(deltaTime){
+        //     this._s
+        // }
+
+    }, {
+        key: 'spin',
+        value: function spin(distance, duration) {
+            this._spinner.spin(distance, duration);
+            // this.updateReelPosition(distance);
+        }
+    }, {
+        key: 'updateSymbolsIfNeeded',
+        value: function updateSymbolsIfNeeded(visibleSymbols) {
+            if (typeof this.currentSymbolIDs == 'undefined') {
+                this.createSymbolSprites(visibleSymbols);
+                this.currentSymbolIDs = visibleSymbols;
+                return;
+            }
+
+            var i;
+            for (i = 0; i < visibleSymbols.length; i++) {
+                if (visibleSymbols[i] != this.currentSymbolIDs[i]) {
+                    this.currentSymbolIDs = visibleSymbols;
+                    this.updateSymbolTextures();
+                    break;
+                }
             }
         }
     }, {
-        key: "view",
-        get: function get() {
+        key: 'createSymbolSprites',
+        value: function createSymbolSprites(visibleSymbols) {
+            this.currentSymbolSprites = new Array();
 
-            return this.container;
+            var i;
+            for (i = 0; i < visibleSymbols.length; i++) {
+                var symbolSprite = new PIXI.Sprite(PIXI.utils.TextureCache['SYM' + visibleSymbols[i] + '.png']);
+                symbolSprite.y = i * symbolSprite.height;
+
+                this.addChild(symbolSprite);
+                this.currentSymbolSprites.push(symbolSprite);
+            }
+
+            this._symbolHeight = this.currentSymbolSprites[0].height;
         }
     }, {
-        key: "reels",
-        get: function get() {
+        key: 'updateSymbolTextures',
+        value: function updateSymbolTextures() {
+            var i;
+            for (i = 0; i < this.currentSymbolIDs.length; i++) {
+                this.currentSymbolSprites[i].texture = PIXI.utils.TextureCache['SYM' + this.currentSymbolIDs[i] + '.png'];
+            }
+        }
 
-            return this._reels;
+        // getVisibleSymbolIDs(position){
+        //     var symbolsToShow = new Array();
+        //
+        //     var i;
+        //     for (i=0; i < this.NUMBER_OF_ROWS; i++){
+        //         const NUMBER_OF_ROWS_ABOVE = Math.floor((this.NUMBER_OF_ROWS - 1)/2);
+        //
+        //         var normalizedIndex = this.normalizeIndex(-NUMBER_OF_ROWS_ABOVE + i);
+        //         var symbolID = this._symbolIDs[normalizedIndex];
+        //
+        //         symbolsToShow.push(symbolID);
+        //     }
+        //
+        //     return (symbolsToShow);
+        // }
+
+    }, {
+        key: 'normalizeIndex',
+        value: function normalizeIndex(index) {
+            var normalizedIndex = index;
+
+            if (index >= this._symbolIDs.length) normalizedIndex = 0;
+
+            if (index < 0) normalizedIndex = this._symbolIDs.length - 1;
+
+            return normalizedIndex;
+        }
+    }, {
+        key: 'getTopSymbolIdByPosition',
+        value: function getTopSymbolIdByPosition(position) {
+            return this._symbolIDs[this.getSymbolIndexByPosition(position)];
+        }
+    }, {
+        key: 'getCentralRowSymbolIdByPosition',
+        value: function getCentralRowSymbolIdByPosition(position) {
+            return this._symbolIDs[this.getSymbolIndexByPosition(position)];
+        }
+    }, {
+        key: 'getSymbolIndexByPosition',
+        value: function getSymbolIndexByPosition(position) {
+            return Math.floor((this.symbolsTotal - 1) * position);
+        }
+    }, {
+        key: 'NUMBER_OF_ROWS',
+        get: function get() {
+            return 3;
+        }
+    }, {
+        key: 'symbolsTotal',
+        get: function get() {
+            return this._symbolIDs.length;
         }
     }]);
 
-    return ReelsView;
-}();
+    return Reel;
+}(PIXI.Container);
 
-exports.default = ReelsView;
+exports.default = Reel;
+
+/***/ }),
+
+/***/ "./src/framework/views/reelView.js":
+/*!*****************************************!*\
+  !*** ./src/framework/views/reelView.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _reel = __webpack_require__(/*! ./reel */ "./src/framework/views/reel.js");
+
+var _reel2 = _interopRequireDefault(_reel);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ReelView = function (_PIXI$Container) {
+    _inherits(ReelView, _PIXI$Container);
+
+    function ReelView(symbolIDsOfEveryReel) {
+        _classCallCheck(this, ReelView);
+
+        var _this = _possibleConstructorReturn(this, (ReelView.__proto__ || Object.getPrototypeOf(ReelView)).call(this));
+
+        var reelsMask = new PIXI.Sprite(PIXI.utils.TextureCache["mask.png"]);
+        _this._mask = reelsMask;
+
+        _this.createReels(symbolIDsOfEveryReel);
+        return _this;
+    }
+
+    _createClass(ReelView, [{
+        key: "createReels",
+        value: function createReels(symbolIDsOfEveryReel) {
+            this._reels = new Array();
+
+            var i;
+            for (i = 0; i < symbolIDsOfEveryReel.length; i++) {
+                var reel = new _reel2.default(symbolIDsOfEveryReel[i]);
+
+                reel.x = this.REEL_OFFSETS_X[i];
+                this.addChild(reel);
+                this._reels.push(reel);
+            }
+        }
+    }, {
+        key: "rollBackReels",
+        value: function rollBackReels() {
+            var i;
+            for (i = 0; i < this._reels.length; i++) {
+                this._reels[i].spin(-this.REEL_ROLL_BACK_DISTANCE, this.ROLL_BACK_DURATION);
+            }
+            // this._reels.forEach(function(reel) {
+            //     reel.spin(-this.REEL_ROLL_BACK_DISTANCE, this.ROLL_BACK_DURATION);
+            // });
+        }
+    }, {
+        key: "REEL_OFFSETS_X",
+        get: function get() {
+            return [70, 310, 553];
+        }
+
+        // how much should reels roll back before actual spinning, one measure unit equals to symbol height
+
+    }, {
+        key: "REEL_ROLL_BACK_DISTANCE",
+        get: function get() {
+            return -1;
+        }
+    }, {
+        key: "ROLL_BACK_DURATION",
+        get: function get() {
+            return 50;
+        }
+    }]);
+
+    return ReelView;
+}(PIXI.Container);
+
+exports.default = ReelView;
 
 /***/ }),
 
@@ -44085,20 +44557,15 @@ var _pixi = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index
 
 var PIXI = _interopRequireWildcard(_pixi);
 
-var _reelsView = __webpack_require__(/*! ./components/reelsView */ "./src/components/reelsView.js");
+var _gameOntroller = __webpack_require__(/*! ./framework/controllers/gameСontroller */ "./src/framework/controllers/gameСontroller.js");
 
-var _reelsView2 = _interopRequireDefault(_reelsView);
-
-var _machineController = __webpack_require__(/*! ./components/machineController */ "./src/components/machineController.js");
-
-var _machineController2 = _interopRequireDefault(_machineController);
+var _gameOntroller2 = _interopRequireDefault(_gameOntroller);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var app = new PIXI.Application({ width: 704, height: 367 });
-var machineController = void 0;
+var app = new PIXI.Application({ width: 960, height: 536, antialias: true });
 
 document.body.appendChild(app.view);
 
@@ -44106,58 +44573,128 @@ app.renderer.view.style.position = "absolute";
 app.renderer.view.style.display = "block";
 app.renderer.autoDensityW = true;
 
-var orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
-console.log(orientation);
+// var orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
+// console.log(orientation);
 
 screen.onorientationchange = resize;
-
 window.onresize = resize;
 
-PIXI.loader.add('./assets/assets.json').load(setup);
+PIXI.loader.add('./assets/assets.json').load(onAssetsLoaded);
 
-function setup() {
+function onAssetsLoaded() {
 
     resize();
 
-    fillBackGround();
-
-    var machine = new _reelsView2.default(app);
-    app.stage.addChild(machine.view);
-
-    machineController = new _machineController2.default(machine.reels);
-
-    createSpinButton();
-}
-
-function fillBackGround() {
-
-    var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["background.jpg"]);
-    sprite.scale.x = 1.1;
-    app.stage.addChild(sprite);
-}
-
-function createSpinButton() {
-
-    function onClick() {
-        machineController.spin();
-    }
-
-    var textureButton = PIXI.utils.TextureCache["spinButton.png"];
-    var spinButton = new PIXI.Sprite(textureButton);
-    spinButton.buttonMode = true;
-    spinButton.interactive = true;
-    spinButton.x = app.renderer.width - spinButton.width;
-    spinButton.y = app.renderer.height - spinButton.height;
-    app.stage.addChild(spinButton);
-
-    spinButton.tap = onClick;
-    spinButton.click = onClick;
+    var slot = new _gameOntroller2.default();
+    app.stage.addChild(slot.view);
 }
 
 function resize() {
     app.renderer.view.style.position = 'absolute';
     app.renderer.view.style.left = (window.innerWidth - app.renderer.width >> 1) + 'px';
 }
+
+/***/ }),
+
+/***/ "./src/slot/models/slotModel.js":
+/*!**************************************!*\
+  !*** ./src/slot/models/slotModel.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SlotModel = function () {
+    function SlotModel() {
+        // const _spinButtonOffsetX = 100;
+        // this.resetToDefaultValues();
+
+        _classCallCheck(this, SlotModel);
+    }
+
+    _createClass(SlotModel, [{
+        key: 'resetToDefaultValues',
+        value: function resetToDefaultValues() {
+            this.balance = 1000;
+            this.currentBet = 10;
+        }
+    }, {
+        key: 'getReelSymbolIDsByReelIndex',
+        value: function getReelSymbolIDsByReelIndex(reelIndex) {
+            switch (reelIndex) {
+                case 0:
+                    return [1, 3, 4, 5, 3, 6, 5, 4, 4, 7, 3, 7];
+                    break;
+                case 1:
+                    return [1, 3, 4, 5, 3, 6, 5, 4, 4, 7, 3, 7];
+                    break;
+                case 2:
+                    return [1, 3, 4, 5, 3, 6, 5, 4, 4, 7, 3, 7];
+                    break;
+            }
+        }
+    }, {
+        key: 'getSymbolIDsOfEveryReel',
+        value: function getSymbolIDsOfEveryReel() {
+            var IDsOfEveryReel = new Array();
+            var i;
+
+            for (i = 0; i < this.REELS_NUMBER; i++) {
+                IDsOfEveryReel.push(this.getReelSymbolIDsByReelIndex(i));
+            }
+
+            return IDsOfEveryReel;
+        }
+    }, {
+        key: 'balance',
+        set: function set(value) {
+            this._balance = value;
+        },
+        get: function get() {
+            return this._balance;
+        }
+    }, {
+        key: 'currentBet',
+        set: function set(value) {
+            this._currentBet = value;
+        },
+        get: function get() {
+            return this._currentBet;
+        }
+    }, {
+        key: 'nextSymbols',
+        set: function set(value) {
+            this._nextSymbols = value;
+        },
+        get: function get() {
+            return this._nextSymbols;
+        }
+    }, {
+        key: 'REELS_NUMBER',
+        get: function get() {
+            return 3;
+        }
+
+        // get UNIQUE_SYMBOLS_AMOUNT(){
+        //     return 6;
+        // }
+
+    }]);
+
+    return SlotModel;
+}();
+
+exports.default = SlotModel;
 
 /***/ })
 
